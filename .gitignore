@@ -1,0 +1,9 @@
+build/
+mx.scratch/
+*.o
+*.d
+*.map
+*.elf
+*.bin
+*.hex
+!.settings/
