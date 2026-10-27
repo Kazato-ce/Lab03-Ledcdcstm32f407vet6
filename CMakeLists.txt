@@ -19,7 +19,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 # Set the project name
-set(CMAKE_PROJECT_NAME Ledcdcstm32f407vet6)
+set(CMAKE_PROJECT_NAME LEDCDCFLASH)
 
 # Enable compile command to ease indexing with e.g. clangd
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
@@ -68,3 +68,20 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
 
     # Add user defined libraries
 )
+
+# Generate .hex and .bin outputs for programming
+get_filename_component(TOOLCHAIN_DIR "${CMAKE_C_COMPILER}" DIRECTORY)
+if(EXISTS "${TOOLCHAIN_DIR}/arm-none-eabi-objcopy.exe")
+    set(OBJCOPY_BIN "${TOOLCHAIN_DIR}/arm-none-eabi-objcopy.exe")
+elseif(EXISTS "${TOOLCHAIN_DIR}/arm-none-eabi-objcopy")
+    set(OBJCOPY_BIN "${TOOLCHAIN_DIR}/arm-none-eabi-objcopy")
+else()
+    set(OBJCOPY_BIN "${CMAKE_OBJCOPY}")
+endif()
+
+add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+    COMMAND ${OBJCOPY_BIN} -O ihex $<TARGET_FILE:${CMAKE_PROJECT_NAME}> ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}.hex
+    COMMAND ${OBJCOPY_BIN} -O binary $<TARGET_FILE:${CMAKE_PROJECT_NAME}> ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}.bin
+    COMMENT "Generating .hex and .bin binaries"
+)
+

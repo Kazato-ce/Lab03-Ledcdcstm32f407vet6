@@ -15,4 +15,4 @@ void APP_CDC_OnReceive(const uint8_t *buf, uint32_t len);
 }
 #endif
 
-#endif
+#endif /* APP_CDC_H */
